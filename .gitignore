@@ -1,0 +1,49 @@
+# =========================
+# Vivado Generated Files
+# =========================
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+
+# Vivado project lock
+*.xpr.lock
+
+# Generated directories
+.cache/
+.hw/
+.ip_user_files/
+.runs/
+.sim/
+.gen/
+.tmp/
+
+# Webtalk / usage stats
+.webtalk/
+
+# Xilinx tool metadata
+.Xil/
+
+# IP output products (can be regenerated)
+*.ip_user_files/
+
+# Simulation waveforms
+*.wcfg
+*.vcd
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# =========================
+# Optional: ignore project file (team workflows)
+# =========================
+# Uncomment if using TCL-only flow
+# *.xpr
