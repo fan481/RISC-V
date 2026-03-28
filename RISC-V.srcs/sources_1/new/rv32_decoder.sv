@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 03/28/2026 08:52:13 AM
+// Create Date: 03/28/2026 10:57:21 AM
 // Design Name: 
-// Module Name: test_sv_file
+// Module Name: rv32_decoder
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,8 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module test_sv_file(
-    input [31:0] in,
-    output [31:0] out
+module rv32_decoder(
+    input [31:0] imem,
+    input decoder_en,
+    input [31:0] mem_rdata,
+    output [14:0] decoded_sig,
+    output [3:0] decoded_inst_ALU
     );
 endmodule

@@ -1,0 +1,11 @@
+# Source files (SystemVerilog)
+*.sv text eol=lf
+
+# Scripts
+*.tcl text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Others
+*.xdc text eol=lf
+*.v text eol=lf
