@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 03/28/2026 10:57:21 AM
+// Create Date: 03/30/2026 09:56:20 AM
 // Design Name: 
-// Module Name: rv32_decoder
+// Module Name: register
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,12 +20,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module rv32_decoder(
-    input [31:0] instr,
-    input decoder_en,
-    input [31:0] mem_rdata,
-    input mem_ready,
-    output [14:0] decoded_sig,
-    output [3:0] decoded_inst_ALU
+module register(
+    input [14:0] decoded_sig,
+    output [31:0] reg_op1,
+    output [31:0] reg_op2
     );
 endmodule
