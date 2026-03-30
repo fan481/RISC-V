@@ -26,6 +26,8 @@ module rv32_decoder(
     input [31:0] mem_rdata,
     input mem_ready,
     output [14:0] decoded_sig,
-    output [3:0] decoded_inst_ALU
+    output [3:0] alu_select,
+    output [3:0] mem_strb,
+    output load_signed
     );
 endmodule
