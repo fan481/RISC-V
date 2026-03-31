@@ -21,6 +21,7 @@
 
 
 module RV32_CPU(
+    input reset,
     input [31:0] imem,
     input decoder_enable,
     input [31:0] mem_rdata,
