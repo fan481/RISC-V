@@ -33,3 +33,5 @@
 | x10-x17    | a0-a7        | Argument registers   | No                     |
 | x18-x27    | s2-s11       | Saved registers      | Yes                    |
 | x28-x31    | t3-t6        | Temporary registers  | No                     |
+## RISC-V Base Instruction Set
+//todo: table

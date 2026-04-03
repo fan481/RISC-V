@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mem_write_latch(
+module mem_write_latch( //todo: rename memory_access
     input mem_valid,
     input [31:0] alu_out,
     output mem_valid,

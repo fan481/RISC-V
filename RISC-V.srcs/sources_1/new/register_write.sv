@@ -24,7 +24,9 @@ module register_write(
     input mem_ready,
     input [31:0] mem_rdata,
     input load_signed,
+    input write_from, //ALU, mem, or PC
     input [14:0] decoded_sig,
+    input [31:0] pc_incr,
     input [31:0] alu_out,
     input [3:0] mem_strb,
     output [31:0] reg_sel_write,
