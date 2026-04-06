@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 03/30/2026 09:56:20 AM
+// Create Date: 04/06/2026 01:30:55 PM
 // Design Name: 
-// Module Name: register
+// Module Name: ALU_mux
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,20 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module register(
-    input clk,
-    input [14:0] decoded_sig,
-    input [31:0] regw_data,
-    output [31:0] reg_op1,
-    output [31:0] reg_op2
+module ALU_mux(
+    input [31:0] rs2,
+    input [31:0] imm,
+    input alu_sel,
+    output logic [31:0] op2
     );
-    
-    reg [31:0] reg_data [31:0];
-    assign reg_op1 = reg_data[decoded_sig[14:10]];
-    assign reg_op2 = reg_data[decoded_sig[9:5]];
-
-    always @(posedge clk) begin
-        reg_data[decoded_sig[4:0]] <= regw_data;
+    always_comb begin
+        if (alu_sel) op2 = imm;
+        else op2 = rs2;
     end
-
 endmodule
