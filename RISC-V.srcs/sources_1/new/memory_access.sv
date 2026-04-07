@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/07/2026 02:08:58 PM
+// Create Date: 04/07/2026 03:52:16 PM
 // Design Name: 
-// Module Name: mem_access
+// Module Name: memory_access
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mem_access( //todo: add cross cycle memwrite (need register/latch) + may need to clean up in/out (decide if wire passthrough should be done or not)
+module memory_access( //todo: add cross cycle memwrite (need register/latch) + may need to clean up in/out (decide if wire passthrough should be done or not)
     input mem_valid,
     input [1:0] mem_size,
     input [31:0] alu_out,
@@ -29,7 +29,7 @@ module mem_access( //todo: add cross cycle memwrite (need register/latch) + may 
     output [1:0] memw_size,
     output [31:0] memw_addr,
     output [31:0] memw_data
-    )
+    );
 
     assign memw_valid = mem_valid;
     assign memw_size = mem_size; //note: data output is always 32 bits and identical to what was in register, mem_size provides truncation info for memory module. May need to refactor depending on memory module spec

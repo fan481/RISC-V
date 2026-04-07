@@ -21,7 +21,7 @@
 
 
 module rv32_decoder( //note: put default case (error) handling only in the decoder
-    input clk,
+    input clk, //todo: consider reordering in/out variables for max readability
     input reset, //todo: refactor?
     input [31:0] instr,
     input instr_valid,
@@ -34,7 +34,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
     output logic [1:0] mem_size, //EX used for both read/write- 00 lw, 01 lb, 10 lh
     output logic load_unsigned, //EX 0 load signed, 1 load unsigned
     output logic [1:0] write_from, //EX select register_write data output- 00 memory, 01 ALU, 10 PC
-    output logic trap//EX
+    output logic trap//EX //todo: refactor
     );
     reg trap_reg;//Todo: refactor trap
     assign trap = trap_reg;
@@ -164,10 +164,74 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 endcase
             end
             7'b0010011: begin //arithmetic immediate
-                
+                decoded_sig = {instr[19:15], 5'b0, instr[11:7]};
+                alu_sel = 1;
+                imm = {{21{instr[31]}}, instr[30:20]};
+                write_from = 2'b01;
+                case (instr[14:12])
+                    3'b000: begin //addi
+                        alu_sel = 4'b0000;
+                    end
+                    3'b010: begin //slti
+                        alu_sel = 4'b1000;
+                    end
+                    3'b011: begin //sltiu
+                        alu_sel = 4'b1001;
+                    end
+                    3'b100: begin //xori
+                        alu_sel = 4'b0100;
+                    end
+                    3'b110: begin //ori
+                        alu_sel = 4'b0011;
+                    end
+                    3'b111: begin //andi
+                        alu_sel = 4'b0010;
+                    end
+                    3'b001: begin //slli
+                        //imm output needs to be shamt
+                        imm = {27'b0, instr[24:20]}; //todo: best practice? the upper bits don't matter (ALU truncates), is it better to declare without upper bits zeroed?
+                        alu_sel = 4'b0101;
+                    end
+                    3'b101: begin //srli, srai
+                        //imm output needs to be shamt
+                        imm = {27'b0, instr[24:20]};
+                        if (instr[30]) alu_sel = 4'b0111; //srai
+                        else alu_sel = 4'b0110; //srli
+                    end
+                endcase
             end
             7'b0110011: begin //arithmetic
-                
+                decoded_sig = {instr[19:15], instr[24:20], instr[11:7]};
+                imm = 32'b0; //todo: check if this line is needed (will a latch be inferred if this is removed?)
+                write_from = 2'b01;
+                case (instr[14:12])
+                    3'b000: begin //add, sub
+                        if (instr[30]) alu_sel = 4'b0001; //sub
+                        else alu_sel = 4'b0000; //add
+                    end
+                    3'b001: begin //sll
+                        alu_sel = 4'b0101;
+                    end
+                    3'b010: begin //slt
+                        alu_sel = 4'b1000;
+                    end
+                    3'b011: begin //sltu
+                        alu_sel = 4'b1001;
+                    end
+                    3'b100: begin //xor
+                        alu_sel = 4'b0100;
+                    end
+                    3'b101: begin //srl, sra
+                        if (instr[30]) alu_sel = 4'b0111; //sra
+                        else alu_sel = 4'b0110; //srl
+                    end
+                    3'b110: begin //or
+                        alu_sel = 4'b0011;
+                    end
+                    3'b111: begin //and
+                        alu_sel = 4'b0010;
+                    end
+                endcase
             end
             7'b0001111: begin //fence/pause
                 
@@ -175,7 +239,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
             7'b1110011: begin //ecall/ebreak
                 
             end
-            
+            default: trap_reg = 1;
         endcase
     end
     
