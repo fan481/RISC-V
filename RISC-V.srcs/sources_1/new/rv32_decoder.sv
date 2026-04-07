@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module rv32_decoder(
+module rv32_decoder( //note: put default case (error) handling only in the decoder
     input clk,
     input reset, //todo: refactor?
     input [31:0] instr,
@@ -30,28 +30,26 @@ module rv32_decoder(
     output logic [3:0] alu_opcode, //opcodes in doc
     output logic alu_sel, //EX mux ALU op2- 0 rs2, 1 imm
     output logic [31:0] imm, //sign-extended immediate output
-    output logic [3:0] mem_strb, //EX
     output logic mem_valid, //EX
-    output logic [1:0] load_size, //EX may need to truncate upper bits loaded from memory- 00 lw, 01 lb, 10 lh
+    output logic [1:0] mem_size, //EX used for both read/write- 00 lw, 01 lb, 10 lh
     output logic load_unsigned, //EX 0 load signed, 1 load unsigned
     output logic [1:0] write_from, //EX select register_write data output- 00 memory, 01 ALU, 10 PC
     output logic trap//EX
     );
     reg trap_reg;//Todo: refactor trap
     assign trap = trap_reg;
-    always @(posedge clk) begin
+    always @(posedge clk) begin //todo: not sure if clocked block should be used here (only trap may need it), also would always_ff infer registers for the blocking assignments here?
         if (reset) trap_reg <= 0;
 
         /* default values */ //todo: put in same order as module outputs
         alu_sel = 0;
         mem_valid = 0;
         write_from = 0;
-        load_size = 0;
+        mem_size = 0;
         load_unsigned = 0;
         pc_select = 0;
-        mem_strb = 0; //todo: this line may not be necessary
-        
-        /* decode logic */
+        //todo: consolidate decoded_sig assignments into one top level assign; make sure garbage data in unused fields doesn't break anything + consider swapping the rs1, rs2 order in decoded_sig
+        /* decode logic */ //todo: check that latches are not inferred due to default case nonassignments
         case (instr[6:0]) //todo: refactor sign extensions for imm to 'imm = $signed(x)' pattern where applicable?
             7'b0110111: begin //LUI
                 decoded_sig[4:0] = instr[11:7]; //note: other modules should only need to access rd
@@ -121,20 +119,20 @@ module rv32_decoder(
                 imm = $signed(instr[31:20]);
                 case (instr[14:12])
                     3'b000: begin //lb
-                        load_size = 2'b01;
+                        mem_size = 2'b01;
                     end
                     3'b001: begin //lh
-                        load_size = 2'b10;
+                        mem_size = 2'b10;
                     end
                     3'b010: begin //lw
-                        //load_size and load_unsigned both assigned already, nothing to do here
+                        //mem_size and load_unsigned both assigned already, nothing to do here
                     end
                     3'b100: begin //lbu
-                        load_size = 2'b01;
+                        mem_size = 2'b01;
                         load_unsigned = 1;
                     end
                     3'b101: begin //lhu
-                        load_size = 2'b10;
+                        mem_size = 2'b10;
                         load_unsigned = 1;
                     end
                     default: begin //invalid funct7/funct3 combination
@@ -143,7 +141,27 @@ module rv32_decoder(
                 endcase
             end
             7'b0100011: begin //store
-                
+                decoded_sig = {instr[19:15], instr[24:20], 5'b0};
+                alu_opcode = 4'b0000;
+                alu_sel = 1;
+                imm = {{21{instr[31]}}, instr[30:25], instr[11:7]};
+                case (instr[14:12])
+                    3'b000: begin //sb
+                        mem_valid = 1;
+                        mem_size = 2'b01;
+                    end
+                    3'b001: begin //sh
+                        mem_valid = 1;
+                        mem_size = 2'b10;
+                    end
+                    3'b010: begin //sw
+                        mem_valid = 1;
+                        //default mem_size is word, 2'b0
+                    end
+                    default: begin //invalid funct7/funct3 combination
+                        trap_reg = 1;
+                    end
+                endcase
             end
             7'b0010011: begin //arithmetic immediate
                 

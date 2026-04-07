@@ -31,7 +31,7 @@ module program_counter(
     );
     
     assign pc_incr = pc_addr + 4;
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (reset) pc_addr <= 0;
         else begin
             case (pc_select)

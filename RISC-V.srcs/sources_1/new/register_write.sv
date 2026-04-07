@@ -21,21 +21,24 @@
 
 
 module register_write(
-    input mem_ready, //todo: implement stalls for mem reads that take longer than 1 cycle
+    input memr_valid, //todo: implement stalls for mem reads that take longer than 1 cycle
     input [31:0] mem_rdata,
     input [1:0] load_size,
     input load_unsigned,
     input write_from, //select write data- 00 memory, 01 ALU, 10 PC
-    input [14:0] decoded_sig, //todo: delete? (shouldn't need to access rs1/rs2 + rd select moved to register module)
+    input [14:0] decoded_sig, //shouldn't need to access rs1/rs2
     input [31:0] pc_incr,
     input [31:0] alu_out,
     input [3:0] mem_strb,
     output [31:0] memr_addr,
-    output [4:0] reg_sel_write, //changed from 32-bit to 5-bit, just use mux //todo: delete?
+    output [31:0] reg_sel_write,
     output logic [31:0] regw_data
     );
+
     assign memr_addr = alu_out; //todo: make sure this continuous drive doesn't cause issues
-    always_comb begin
+    assign reg_sel_write = 32'b1 << decoded_sig[4:0]; //select rd, decoder needs to make it default zero
+
+    always_comb begin //load/select mem
         case (write_from)
             2'b00: begin //memory, memory module should return 32 bits and CPU should load byte/half into LSBs
                 case (load_size)
