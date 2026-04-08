@@ -84,8 +84,8 @@ module RV32_CPU(
     );
     rv32_decoder decoder_inst (
         //inputs
-        .clk(clk), //todo: consider reordering in/out variables for max readability
-        .reset(reset), //todo: refactor?
+        .clk(clk),
+        .reset(reset),
         .instr(instr),
         .instr_valid(instr_valid),
         //outputs
@@ -150,12 +150,12 @@ module RV32_CPU(
         .rs2(rs2)
     );
     register_write (
-        .memr_valid(memr_valid), //todo: implement stalls for mem reads that take longer than 1 cycle
+        .memr_valid(memr_valid),
         .memr_data(memr_data),
         .mem_size(mem_size),
         .load_unsigned(load_unsigned),
-        .write_from(write_from), //select write data- 00 memory, 01 ALU, 10 PC
-        .decoded_sig(decoded_sig), //shouldn't need to access rs1/rs2
+        .write_from(write_from),
+        .decoded_sig(decoded_sig),
         .pc_incr(pc_incr),
         .alu_out(alu_out),
         .memr_addr(memr_addr),
