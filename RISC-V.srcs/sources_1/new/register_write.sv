@@ -42,14 +42,14 @@ module register_write(
             2'b00: begin //memory, memory module should return 32 bits and CPU should load byte/half into LSBs
                 case (mem_size)
                     2'b01: begin //byte
-                        if (load_unsigned) regw_data = {24'b0, mem_rdata[7:0]};
-                        else regw_data = $signed(mem_rdata[7:0]);
+                        if (load_unsigned) regw_data = {24'b0, memr_data[7:0]};
+                        else regw_data = $signed(memr_data[7:0]);
                     end
                     2'b10: begin //half
-                        if (load_unsigned) regw_data = {16'b0, mem_rdata[15:0]};
-                        else regw_data = $signed(mem_rdata[15:0]);
+                        if (load_unsigned) regw_data = {16'b0, memr_data[15:0]};
+                        else regw_data = $signed(memr_data[15:0]);
                     end
-                    default: regw_data = mem_rdata; //for lw and also for avoiding latch inference
+                    default: regw_data = memr_data; //for lw and also for avoiding latch inference
                 endcase
             end
             2'b01: begin //ALU

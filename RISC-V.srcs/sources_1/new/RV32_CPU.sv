@@ -36,7 +36,7 @@ module RV32_CPU(
     );
 
     /* 
-    output wires 
+    module connection wires
     */
     /* imem */
     wire [31:0] instr;

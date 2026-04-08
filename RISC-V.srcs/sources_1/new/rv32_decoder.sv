@@ -31,7 +31,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
     output logic alu_sel, //EX mux ALU op2- 0 rs2, 1 imm
     output logic [31:0] imm, //sign-extended immediate output
     output logic mem_valid, //EX
-    output logic [1:0] mem_size, //EX used for both read/write- 00 lw, 01 lb, 10 lh
+    output logic [1:0] mem_size, //EX used for both read/write- 00 word, 01 byte, 10 half
     output logic load_unsigned, //EX 0 load signed, 1 load unsigned
     output logic [1:0] write_from, //EX select register_write data output- 00 memory, 01 ALU, 10 PC
     output logic trap//EX //todo: refactor
