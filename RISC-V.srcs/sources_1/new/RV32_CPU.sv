@@ -125,11 +125,19 @@ module RV32_CPU(
     );
     ALU ALU_inst (
         //inputs
-        .op1(op1),
+        .op1(rs1),
         .op2(op2),
         .alu_opcode(alu_opcode),
         //output
         .alu_out(alu_out)
+    );
+    ALU_mux ALU_mux_inst (
+        //inputs
+        .rs2(rs2),
+        .imm(imm),
+        .alu_sel(alu_sel),
+        //output
+        .op2(op2)
     );
     register_file (
         //inputs
@@ -154,5 +162,5 @@ module RV32_CPU(
         .reg_sel_write(reg_sel_write),
         .regw_data(regw_data)
     );
-    
+
 endmodule
