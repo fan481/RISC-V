@@ -27,7 +27,7 @@ module program_counter(
     input [31:0] alu_out, //should either be register data for jump register (pass-thru ALU), or used as bool flag to indicate branch on beq/bne/blt/...
     input [31:0] imm, //used for j/b offset
     output logic [31:0] pc_addr,
-    output [31:0] pc_incr
+    output [31:0] pc_incr //for storing return address
     );
     
     assign pc_incr = pc_addr + 4;

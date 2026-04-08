@@ -22,14 +22,13 @@
 
 module register_write(
     input memr_valid, //todo: implement stalls for mem reads that take longer than 1 cycle
-    input [31:0] mem_rdata,
-    input [1:0] load_size,
+    input [31:0] memr_data,
+    input [1:0] mem_size,
     input load_unsigned,
     input write_from, //select write data- 00 memory, 01 ALU, 10 PC
     input [14:0] decoded_sig, //shouldn't need to access rs1/rs2
     input [31:0] pc_incr,
     input [31:0] alu_out,
-    input [3:0] mem_strb,
     output [31:0] memr_addr,
     output [31:0] reg_sel_write,
     output logic [31:0] regw_data
@@ -41,7 +40,7 @@ module register_write(
     always_comb begin //load/select mem
         case (write_from)
             2'b00: begin //memory, memory module should return 32 bits and CPU should load byte/half into LSBs
-                case (load_size)
+                case (mem_size)
                     2'b01: begin //byte
                         if (load_unsigned) regw_data = {24'b0, mem_rdata[7:0]};
                         else regw_data = $signed(mem_rdata[7:0]);

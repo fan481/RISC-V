@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 03/30/2026 09:56:20 AM
+// Create Date: 04/08/2026 11:41:56 AM
 // Design Name: 
-// Module Name: register
+// Module Name: register_file
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,14 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module register(
+module register_file(
     input clk,
     input [14:0] decoded_sig,
     input [31:0] reg_sel_write,
     input [31:0] regw_data,
-    output [31:0] reg_op1,
-    output [31:0] reg_op2
+    output [31:0] rs1,
+    output [31:0] rs2
     );
+
     reg [31:0] reg_data [31:0];
     assign reg_data[0] = 32'b0; // $zero
     assign reg_op1 = reg_data[decoded_sig[14:10]];
