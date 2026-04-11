@@ -33,11 +33,17 @@ module instruction_memory( //todo: change reg to logic in all modules
 
     /* simulation/testing */ //todo: refactor pc data loading
     initial begin
-        pc_data[0] = 32'h00100293;
-        pc_data[1] = 32'h00100313;
-        pc_data[2] = 32'h00100393;
-        pc_data[3] = 32'h00100413;
-        pc_data[4] = 32'h00100493;
+        pc_data[0] = 32'h00100293; //addi x5, x0, 1
+        pc_data[1] = 32'h00001337; //lui x6, 1 
+        pc_data[2] = 32'h008000ef; //jal x1, 8 //skip below
+        pc_data[3] = 32'b1111111; //invalid instruction (flag trap)
+        pc_data[4] = 32'h018000e7; //jalr x1, 24(x0) //skip below
+        pc_data[5] = 32'b1111111; //invalid instruction (flag trap)
+        pc_data[6] = 32'h00629463; //bne x5, x6, 8 //skip below
+        pc_data[7] = 32'b1111111; //invalid instruction (flag trap)
+        pc_data[8] = 32'h00512023; //sw x5, 0(x2) //x2 is $sp, init to top of stack
+        pc_data[9] = 32'h00012383; //lw x7, 0(x2)
+        pc_data[10] = 32'h00628433; //add x8, x5, x6
     end
 
 endmodule

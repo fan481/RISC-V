@@ -31,7 +31,7 @@ module RV32_CPU(
     output memw_valid_cpuout,
     output [1:0] memw_size_cpuout,
     output [31:0] memw_addr_cpuout,
-    output [3:0] memw_data_cpuout,
+    output [31:0] memw_data_cpuout,
     output trap_cpuout
     );
 

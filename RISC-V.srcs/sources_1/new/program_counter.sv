@@ -38,7 +38,7 @@ module program_counter(
                 3'b000: begin //not jump or branch
                     pc_addr <= pc_incr;
                 end
-                3'b001: begin //jump
+                3'b001: begin //jump //todo: check this is supposed to be pc_addr + imm for j/b and not pc_addr + imm + 4
                     pc_addr <= pc_addr + imm;
                 end
                 3'b010: begin //jump register 
@@ -48,7 +48,7 @@ module program_counter(
                     if (~|alu_out) pc_addr <= pc_addr + imm; //check if subtraction result == 0
                     else pc_addr <= pc_incr;
                 end
-                3'b100: begin //bne
+                3'b100: begin //bne //note: check for max value bug
                     if (|alu_out) pc_addr <= pc_addr + imm; //check if subtraction result != 0
                     else pc_addr <= pc_incr;
                 end

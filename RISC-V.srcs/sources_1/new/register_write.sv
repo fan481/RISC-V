@@ -25,7 +25,7 @@ module register_write(
     input [31:0] memr_data,
     input [1:0] mem_size,
     input load_unsigned,
-    input write_from, //select write data- 00 memory, 01 ALU, 10 PC
+    input [1:0] write_from, //select write data- 00 memory, 01 ALU, 10 PC
     input [14:0] decoded_sig, //shouldn't need to access rs1/rs2
     input [31:0] pc_incr,
     input [31:0] alu_out,
