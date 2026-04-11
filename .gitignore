@@ -24,6 +24,7 @@
 # Note: Above not working properly
 RISC-V.sim/
 RISC-V.cache/
+RISC-V.hw/
 
 # Webtalk / usage stats
 .webtalk/
