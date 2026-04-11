@@ -22,14 +22,14 @@
 
 module RV32_CPU(
     input clk, //todo: consider naming these inputs with _cpuin
-    input reset,
-    //input [31:0] imem,
+    input reset, //todo: cleanup below and wires
+    //input [31:0] imem, 
     //input instr_valid,
     input [31:0] memr_data,
     input memr_valid,
     output [31:0] memr_addr_cpuout,
     output memw_valid_cpuout,
-    output memw_size_cpuout,
+    output [1:0] memw_size_cpuout,
     output [31:0] memw_addr_cpuout,
     output [3:0] memw_data_cpuout,
     output trap_cpuout
@@ -51,15 +51,14 @@ module RV32_CPU(
     wire [1:0] mem_size;
     wire load_unsigned; 
     wire [1:0] write_from;
-    wire trap;
     /* PC */
     wire [31:0] pc_addr;
     wire [31:0] pc_incr;
     /* memory_access */
-    wire memw_valid;
-    wire [1:0] memw_size;
-    wire [31:0] memw_addr;
-    wire [31:0] memw_data;
+    //wire memw_valid;
+    //wire [1:0] memw_size;
+    //wire [31:0] memw_addr;
+    //wire [31:0] memw_data;
     /* ALU */
     wire [31:0] alu_out;
     /* ALU_mux */
@@ -68,7 +67,7 @@ module RV32_CPU(
     wire [31:0] rs1;
     wire [31:0] rs2;
     /* register_write */
-    wire [31:0] memr_addr;
+    //wire [31:0] memr_addr;
     wire [31:0] reg_sel_write;
     wire [31:0] regw_data;
 
@@ -139,7 +138,7 @@ module RV32_CPU(
         //output
         .op2(op2)
     );
-    register_file (
+    register_file register_file_inst (
         //inputs
         .clk(clk),
         .decoded_sig(decoded_sig),
@@ -149,7 +148,7 @@ module RV32_CPU(
         .rs1(rs1),
         .rs2(rs2)
     );
-    register_write (
+    register_write register_write_inst (
         .memr_valid(memr_valid),
         .memr_data(memr_data),
         .mem_size(mem_size),
@@ -158,7 +157,7 @@ module RV32_CPU(
         .decoded_sig(decoded_sig),
         .pc_incr(pc_incr),
         .alu_out(alu_out),
-        .memr_addr(memr_addr),
+        .memr_addr(memr_addr_cpuout),
         .reg_sel_write(reg_sel_write),
         .regw_data(regw_data)
     );

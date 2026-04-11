@@ -36,18 +36,24 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
     output logic [1:0] write_from, //EX select register_write data output- 00 memory, 01 ALU, 10 PC
     output logic trap//EX //todo: refactor
     );
-    reg trap_reg;//Todo: refactor trap
-    assign trap = trap_reg;
-    always @(posedge clk) begin //todo: not sure if clocked block should be used here (only trap may need it), also would always_ff infer registers for the blocking assignments here?
-        if (reset) trap_reg <= 0;
 
+    logic trap_flag; //todo: consider refactoring trap/error
+
+    always_ff @(posedge clk) begin
+        if (reset) trap <= 0;
+        else trap <= trap_flag;
+    end
+
+    always_comb begin
+        trap_flag = 0;
         /* default values */ //todo: put in same order as module outputs
-        alu_sel = 0;
+        alu_sel = 0; //todo: default can be 1 to reduce LoC
         mem_valid = 0;
         write_from = 0;
         mem_size = 0;
         load_unsigned = 0;
         pc_select = 0;
+        decoded_sig[4:0] = 5'b0; //todo: remove redundant assignments below
         //todo: consolidate decoded_sig assignments into one top level assign; make sure garbage data in unused fields doesn't break anything + consider swapping the rs1, rs2 order in decoded_sig
         /* decode logic */ //todo: check that latches are not inferred due to default case nonassignments
         case (instr[6:0]) //todo: refactor sign extensions for imm to 'imm = $signed(x)' pattern where applicable?
@@ -59,7 +65,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 write_from = 2'b01;
             end 
             7'b0010111: begin //AUIPC not supported, no need foreseen
-                trap_reg = 1;
+                trap_flag = 1;
             end
             7'b1101111: begin //JAL
                 decoded_sig[4:0] = instr[11:7]; //note: other modules should only need to access rd
@@ -107,7 +113,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                         alu_opcode = 4'b1001; //pc checks ~alu_out[0]
                     end
                     default: begin //invalid funct7/funct3 combination
-                        trap_reg = 1;
+                        trap_flag = 1;
                     end
                 endcase
             end
@@ -136,7 +142,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                         load_unsigned = 1;
                     end
                     default: begin //invalid funct7/funct3 combination
-                        trap_reg = 1;
+                        trap_flag = 1;
                     end
                 endcase
             end
@@ -159,7 +165,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                         //default mem_size is word, 2'b0
                     end
                     default: begin //invalid funct7/funct3 combination
-                        trap_reg = 1;
+                        trap_flag = 1;
                     end
                 endcase
             end
@@ -170,33 +176,33 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 write_from = 2'b01;
                 case (instr[14:12])
                     3'b000: begin //addi
-                        alu_sel = 4'b0000;
+                        alu_opcode = 4'b0000;
                     end
                     3'b010: begin //slti
-                        alu_sel = 4'b1000;
+                        alu_opcode = 4'b1000;
                     end
                     3'b011: begin //sltiu
-                        alu_sel = 4'b1001;
+                        alu_opcode = 4'b1001;
                     end
                     3'b100: begin //xori
-                        alu_sel = 4'b0100;
+                        alu_opcode = 4'b0100;
                     end
                     3'b110: begin //ori
-                        alu_sel = 4'b0011;
+                        alu_opcode = 4'b0011;
                     end
                     3'b111: begin //andi
-                        alu_sel = 4'b0010;
+                        alu_opcode = 4'b0010;
                     end
                     3'b001: begin //slli
                         //imm output needs to be shamt
                         imm = {27'b0, instr[24:20]}; //todo: best practice? the upper bits don't matter (ALU truncates), is it better to declare without upper bits zeroed?
-                        alu_sel = 4'b0101;
+                        alu_opcode = 4'b0101;
                     end
                     3'b101: begin //srli, srai
                         //imm output needs to be shamt
                         imm = {27'b0, instr[24:20]};
-                        if (instr[30]) alu_sel = 4'b0111; //srai
-                        else alu_sel = 4'b0110; //srli
+                        if (instr[30]) alu_opcode = 4'b0111; //srai
+                        else alu_opcode = 4'b0110; //srli
                     end
                 endcase
             end
@@ -206,30 +212,30 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 write_from = 2'b01;
                 case (instr[14:12])
                     3'b000: begin //add, sub
-                        if (instr[30]) alu_sel = 4'b0001; //sub
-                        else alu_sel = 4'b0000; //add
+                        if (instr[30]) alu_opcode = 4'b0001; //sub
+                        else alu_opcode = 4'b0000; //add
                     end
                     3'b001: begin //sll
-                        alu_sel = 4'b0101;
+                        alu_opcode = 4'b0101;
                     end
                     3'b010: begin //slt
-                        alu_sel = 4'b1000;
+                        alu_opcode = 4'b1000;
                     end
                     3'b011: begin //sltu
-                        alu_sel = 4'b1001;
+                        alu_opcode = 4'b1001;
                     end
                     3'b100: begin //xor
-                        alu_sel = 4'b0100;
+                        alu_opcode = 4'b0100;
                     end
                     3'b101: begin //srl, sra
-                        if (instr[30]) alu_sel = 4'b0111; //sra
-                        else alu_sel = 4'b0110; //srl
+                        if (instr[30]) alu_opcode = 4'b0111; //sra
+                        else alu_opcode = 4'b0110; //srl
                     end
                     3'b110: begin //or
-                        alu_sel = 4'b0011;
+                        alu_opcode = 4'b0011;
                     end
                     3'b111: begin //and
-                        alu_sel = 4'b0010;
+                        alu_opcode = 4'b0010;
                     end
                 endcase
             end
@@ -239,7 +245,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
             7'b1110011: begin //ecall/ebreak
                 
             end
-            default: trap_reg = 1;
+            default: trap_flag = 1;
         endcase
     end
     

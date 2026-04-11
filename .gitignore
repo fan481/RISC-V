@@ -6,18 +6,24 @@
 *.str
 *.pb
 *.wdb
+*.wdf
+*.wpc
 
 # Vivado project lock
 *.xpr.lock
 
 # Generated directories
-.cache/
-.hw/
-.ip_user_files/
-.runs/
-.sim/
-.gen/
-.tmp/
+**/.cache/
+**/.hw/
+**/.ip_user_files/
+**/.runs/
+**/.sim/
+**/.gen/
+**/.tmp/
+
+# Note: Above not working properly
+RISC-V.sim/
+RISC-V.cache/
 
 # Webtalk / usage stats
 .webtalk/

@@ -20,10 +20,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module test_system(
-        input clk,
-        input reset
-    );
+module test_system;
+
+    logic clk;
+    logic reset;
+    
+    initial clk = 0;
+    always #5 clk = ~clk;
+    initial begin
+        reset = 1;
+        #20 reset = 0;
+    end
 
     wire trap; //todo: consider renaming _cpuout and/or these wire declarations
     wire [31:0] memr_data;
