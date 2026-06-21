@@ -1,0 +1,11 @@
+00100293 //addi x5, x0, 1
+00001337 //lui x6, 1 
+008000ef //jal x1, 8 //skip below
+0000007f //invalid instruction (flag trap)
+018000e7 //jalr x1, 24(x0) //skip below
+0000007f //invalid instruction (flag trap)
+00629463 //bne x5, x6, 8 //skip below
+0000007f //invalid instruction (flag trap)
+00512023 //sw x5, 0(x2) //x2 is $sp, init to top of stack
+00012383 //lw x7, 0(x2)
+00628433 //add x8, x5, x6
