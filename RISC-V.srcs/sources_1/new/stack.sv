@@ -24,7 +24,7 @@ module stack(
     input clk,
     input [31:0] memr_addr,
     input memw_valid,
-    input memw_size, //00 lw, 01 lb, 10 lh
+    input [1:0] memw_size, //00 lw, 01 lb, 10 lh
     input [31:0] memw_addr,
     input [31:0] memw_data,
     output [31:0] memr_data,
@@ -32,7 +32,7 @@ module stack(
     );
     reg [7:0] stack_data [1023:0];
     assign memr_valid = 1; //intra-cycle stack so memr_valid always 1
-    assign memr_data = stack_data[memr_addr];
+    assign memr_data = {stack_data[memr_addr - 3], stack_data[memr_addr - 2], stack_data[memr_addr - 1], stack_data[memr_addr]};
 
     always_ff @(posedge clk) begin //todo: check synthesis/optimization
         if (memw_valid) begin
