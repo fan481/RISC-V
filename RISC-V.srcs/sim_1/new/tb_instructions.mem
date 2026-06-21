@@ -9,3 +9,43 @@
 00512023 //sw x5, 0(x2) //x2 is $sp, init to top of stack
 00012383 //lw x7, 0(x2)
 00628433 //add x8, x5, x6
+ff800493 //addi x9, x0, -8 (signed/shift test operand)
+00200513 //addi x10, x0, 2 (shift test operand)
+405505b3 //sub x11, x10, x5
+00a29633 //sll x12, x5, x10
+0054a6b3 //slt x13, x9, x5
+0054b733 //sltu x14, x9, x5
+0054c7b3 //xor x15, x9, x5
+00a4d833 //srl x16, x9, x10
+40a4d8b3 //sra x17, x9, x10
+0054e933 //or x18, x9, x5
+0054f9b3 //and x19, x9, x5
+ffc4aa13 //slti x20, x9, -4
+fff2ba93 //sltiu x21, x5, -1
+fff4cb13 //xori x22, x9, -1
+00856b93 //ori x23, x10, 8
+00f4fc13 //andi x24, x9, 15
+00429c93 //slli x25, x5, 4
+0024dd13 //srli x26, x9, 2
+4024dd93 //srai x27, x9, 2
+f8000e13 //addi x28, x0, -128 (signed byte test value)
+ffc10823 //sb x28, -16(x2)
+ff010e83 //lb x29, -16(x2)
+ff014f03 //lbu x30, -16(x2)
+ffc11623 //sh x28, -20(x2)
+fec11183 //lh x3, -20(x2)
+fec15203 //lhu x4, -20(x2)
+fe912423 //sw x9, -24(x2)
+fe812503 //lw x10, -24(x2)
+00528463 //beq x5, x5, 8 (skip invalid instruction)
+0000007f //invalid instruction (flag trap)
+0054c463 //blt x9, x5, 8 (skip invalid instruction)
+0000007f //invalid instruction (flag trap)
+0092d463 //bge x5, x9, 8 (skip invalid instruction)
+0000007f //invalid instruction (flag trap)
+0092e463 //bltu x5, x9, 8 (skip invalid instruction)
+0000007f //invalid instruction (flag trap)
+0054f463 //bgeu x9, x5, 8 (skip invalid instruction)
+0000007f //invalid instruction (flag trap)
+00000f97 //auipc x31, 0
+0000006f //jal x0, 0 (hold PC at test completion)

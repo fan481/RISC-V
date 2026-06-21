@@ -81,4 +81,80 @@ module testbench_;
     
 
 
+    integer test_errors = 0;
+    logic unexpected_trap = 0;
+
+    task automatic check_reg(
+        input integer reg_index,
+        input logic [31:0] expected,
+        input string instruction_name
+    );
+        if (cpu_inst.register_file_inst.reg_data[reg_index] !== expected) begin
+            $error("%s failed: x%0d = %h, expected %h",
+                   instruction_name, reg_index,
+                   cpu_inst.register_file_inst.reg_data[reg_index], expected);
+            test_errors = test_errors + 1;
+        end
+    endtask
+
+    // A trap before the final AUIPC means a branch reached an invalid sentinel.
+    always @(negedge clk) begin
+        if (!reset && trap && cpu_inst.pc_inst.pc_addr != 32'h000000c8)
+            unexpected_trap = 1;
+    end
+
+    initial begin
+        wait (cpu_inst.pc_inst.pc_addr == 32'h000000c8);
+        @(negedge clk);
+        #1;
+
+        check_reg(1,  32'h00000014, "JAL/JALR");
+        check_reg(3,  32'hffffff80, "SH/LH");
+        check_reg(4,  32'h0000ff80, "LHU");
+        check_reg(5,  32'h00000001, "ADDI");
+        check_reg(6,  32'h00001000, "LUI");
+        check_reg(7,  32'h00000001, "SW/LW");
+        check_reg(8,  32'h00001001, "ADD");
+        check_reg(9,  32'hfffffff8, "ADDI negative immediate");
+        check_reg(10, 32'hfffffff8, "SW/LW full-width");
+        check_reg(11, 32'h00000001, "SUB");
+        check_reg(12, 32'h00000004, "SLL");
+        check_reg(13, 32'h00000001, "SLT");
+        check_reg(14, 32'h00000000, "SLTU");
+        check_reg(15, 32'hfffffff9, "XOR");
+        check_reg(16, 32'h3ffffffe, "SRL");
+        check_reg(17, 32'hfffffffe, "SRA");
+        check_reg(18, 32'hfffffff9, "OR");
+        check_reg(19, 32'h00000000, "AND");
+        check_reg(20, 32'h00000001, "SLTI");
+        check_reg(21, 32'h00000001, "SLTIU");
+        check_reg(22, 32'h00000007, "XORI");
+        check_reg(23, 32'h0000000a, "ORI");
+        check_reg(24, 32'h00000008, "ANDI");
+        check_reg(25, 32'h00000010, "SLLI");
+        check_reg(26, 32'h3ffffffe, "SRLI");
+        check_reg(27, 32'hfffffffe, "SRAI");
+        check_reg(28, 32'hffffff80, "ADDI signed byte operand");
+        check_reg(29, 32'hffffff80, "SB/LB");
+        check_reg(30, 32'h00000080, "LBU");
+
+        if (trap !== 1'b0 ||
+            cpu_inst.register_file_inst.reg_data[31] !== 32'h000000c4) begin
+            $error("AUIPC failed: x31 = %h, trap = %b; expected 000000c4, 0",
+                   cpu_inst.register_file_inst.reg_data[31], trap);
+            test_errors = test_errors + 1;
+        end
+
+        if (unexpected_trap) begin
+            $error("An instruction trapped or a branch reached an invalid sentinel");
+            test_errors = test_errors + 1;
+        end
+
+        if (test_errors == 0)
+            $display("PASS: all README instructions behaved as expected");
+        else
+            $fatal(1, "FAIL: %0d instruction checks failed", test_errors);
+        $finish;
+    end
+
 endmodule
