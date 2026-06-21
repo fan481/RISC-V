@@ -29,9 +29,9 @@ module register_file(
     output [31:0] rs2
     );
 
-    reg [31:0] reg_data [31:0]; //todo: consider setting all registers to zero on reset
+    reg [31:0] reg_data [31:0];
     assign reg_data[0] = 32'b0; // $zero
-    assign reg_data[2] = 10'b1111111111; //init $sp //todo: init this differently, not modular with different stack/dmem sizes 
+    assign reg_data[2] = 10'b1111111111; // init $sp
     assign rs1 = reg_data[decoded_sig[14:10]];
     assign rs2 = reg_data[decoded_sig[9:5]];
 

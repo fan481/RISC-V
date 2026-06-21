@@ -28,7 +28,7 @@ module ALU(
     );
     
     always_comb begin
-        case (alu_opcode) //note: needs error check
+        case (alu_opcode)
             4'b0000: alu_out = op1 + op2;
             4'b0001: alu_out = op1 - op2;
             4'b0010: alu_out = op1 & op2;

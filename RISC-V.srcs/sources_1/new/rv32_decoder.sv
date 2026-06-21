@@ -21,11 +21,11 @@
 
 
 module rv32_decoder( //note: put default case (error) handling only in the decoder
-    input clk, //todo: consider reordering in/out variables for max readability
-    input reset, //todo: refactor?
+    input clk,
+    input reset,
     input [31:0] instr,
     input instr_valid,
-    output logic [14:0] decoded_sig, //{rs1, rs2, rd} todo: does this really need to connect to both register_write and register modules?
+    output logic [14:0] decoded_sig, //{rs1, rs2, rd}
     output logic [2:0] pc_select, //EX Select jump/branch mode for PC- 000 not jump or branch, 001 jump, 010 jump register, 011 beq, 100 bne, 101 comparative branches 
     output logic [3:0] alu_opcode, //opcodes in doc
     output logic alu_sel, //EX mux ALU op2- 0 rs2, 1 imm
@@ -34,10 +34,10 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
     output logic [1:0] mem_size, //EX used for both read/write- 00 word, 01 byte, 10 half
     output logic load_unsigned, //EX 0 load signed, 1 load unsigned
     output logic [1:0] write_from, //EX select register_write data output- 00 memory, 01 ALU, 10 PC
-    output logic trap//EX //todo: refactor
+    output logic trap
     );
 
-    logic trap_flag; //todo: consider refactoring trap/error
+    logic trap_flag;
 
     always_ff @(posedge clk) begin
         if (reset) trap <= 0;
@@ -45,18 +45,17 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
     end
 
     always_comb begin
+        /* default values */
         trap_flag = 0;
-        /* default values */ //todo: put in same order as module outputs
-        alu_sel = 0; //todo: default can be 1 to reduce LoC
+        alu_sel = 0;
         mem_valid = 0;
         write_from = 0;
         mem_size = 0;
         load_unsigned = 0;
         pc_select = 0;
-        decoded_sig[4:0] = 5'b0; //todo: remove redundant assignments below
-        //todo: consolidate decoded_sig assignments into one top level assign; make sure garbage data in unused fields doesn't break anything + consider swapping the rs1, rs2 order in decoded_sig
-        /* decode logic */ //todo: check that latches are not inferred due to default case nonassignments
-        case (instr[6:0]) //todo: refactor sign extensions for imm to 'imm = $signed(x)' pattern where applicable?
+        decoded_sig[4:0] = 5'b0;
+        /* decode logic */
+        case (instr[6:0])
             7'b0110111: begin //LUI
                 decoded_sig[4:0] = instr[11:7]; //note: other modules should only need to access rd
                 alu_opcode = 4'b1010;
@@ -64,7 +63,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 imm = {instr[31:12], 12'b0};
                 write_from = 2'b01;
             end 
-            7'b0010111: begin //AUIPC not supported, no need foreseen
+            7'b0010111: begin //not supporting AUIPC, flag trap for illegal instruction
                 trap_flag = 1;
             end
             7'b1101111: begin //JAL
@@ -85,7 +84,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                 write_from = 2'b10;
             end
             7'b1100011: begin //branch
-                decoded_sig = {instr[19:15], instr[24:20], 5'b0}; //todo: optimize for rd == $zero case (when there's nothing to write)
+                decoded_sig = {instr[19:15], instr[24:20], 5'b0};
                 imm = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
                 case (instr[14:12]) //funct3
                     3'b000: begin //beq
@@ -195,7 +194,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
                     end
                     3'b001: begin //slli
                         //imm output needs to be shamt
-                        imm = {27'b0, instr[24:20]}; //todo: best practice? the upper bits don't matter (ALU truncates), is it better to declare without upper bits zeroed?
+                        imm = {27'b0, instr[24:20]};
                         alu_opcode = 4'b0101;
                     end
                     3'b101: begin //srli, srai
@@ -208,7 +207,7 @@ module rv32_decoder( //note: put default case (error) handling only in the decod
             end
             7'b0110011: begin //arithmetic
                 decoded_sig = {instr[19:15], instr[24:20], instr[11:7]};
-                imm = 32'b0; //todo: check if this line is needed (will a latch be inferred if this is removed?)
+                imm = 32'b0;
                 write_from = 2'b01;
                 case (instr[14:12])
                     3'b000: begin //add, sub

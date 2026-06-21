@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module instruction_memory( //todo: change reg to logic in all modules
+module instruction_memory(
     input [31:0] pc_addr,
     output [31:0] instr,
     output instr_valid

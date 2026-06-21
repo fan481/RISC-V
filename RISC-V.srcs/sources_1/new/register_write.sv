@@ -21,7 +21,7 @@
 
 
 module register_write(
-    input memr_valid, //todo: implement stalls for mem reads that take longer than 1 cycle
+    input memr_valid,
     input [31:0] memr_data,
     input [1:0] mem_size,
     input load_unsigned,
@@ -34,7 +34,7 @@ module register_write(
     output logic [31:0] regw_data
     );
 
-    assign memr_addr = alu_out; //todo: make sure this continuous drive doesn't cause issues
+    assign memr_addr = alu_out;
     assign reg_sel_write = 32'b1 << decoded_sig[4:0]; //select rd, decoder needs to make it default zero
 
     always_comb begin //load/select mem
@@ -60,7 +60,6 @@ module register_write(
             end
             default: regw_data = alu_out; //avoid latch inference
         endcase
-        //shouldn't need error flagging in this module, decoder should be enough
     end
 
 endmodule

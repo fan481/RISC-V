@@ -21,8 +21,8 @@
 
 
 module RV32_CPU(
-    input clk, //todo: consider naming these inputs with _cpuin
-    input reset, //todo: cleanup below and wires
+    input clk,
+    input reset,
     //input [31:0] imem, 
     //input instr_valid,
     input [31:0] memr_data,
@@ -71,9 +71,6 @@ module RV32_CPU(
     wire [31:0] reg_sel_write;
     wire [31:0] regw_data;
 
-    /*
-    module instantiation //todo: remove inst names?
-    */
     instruction_memory imem_inst (
         //input
         .pc_addr(pc_addr),
@@ -149,6 +146,7 @@ module RV32_CPU(
         .rs2(rs2)
     );
     register_write register_write_inst (
+        //inputs
         .memr_valid(memr_valid),
         .memr_data(memr_data),
         .mem_size(mem_size),
@@ -157,6 +155,7 @@ module RV32_CPU(
         .decoded_sig(decoded_sig),
         .pc_incr(pc_incr),
         .alu_out(alu_out),
+        //outputs
         .memr_addr(memr_addr_cpuout),
         .reg_sel_write(reg_sel_write),
         .regw_data(regw_data)

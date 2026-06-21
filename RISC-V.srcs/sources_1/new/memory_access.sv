@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module memory_access( //todo: add cross cycle memwrite (need register/latch) + may need to clean up in/out (decide if wire passthrough should be done or not)
+module memory_access(
     input mem_valid,
     input [1:0] mem_size,
     input [31:0] alu_out,
