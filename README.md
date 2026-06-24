@@ -1,5 +1,10 @@
-# RISC-V Notes
+# RV32I Single-Cycle CPU (SystemVerilog)
+This project is a 32-bit RISC-V processor implementing the RV32I base instruction set, written in SystemVerilog and using Vivado for simulation. The CPU architecture is single-stage, where each instruction is executed within one clock cycle.
+
+Agentic AI was used to assist with generating the testbench, but all other code was written by hand for learning purposes.
+# RISC-V Documentation
 https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf
+# Project Documentation
 ## ALU Opcodes (not necessarily risc-v standard)
 
 | alu_op | Operation         | Description / Output                                              |
@@ -34,7 +39,7 @@ https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf
 | x10-x17    | a0-a7        | Argument registers   | No                     |
 | x18-x27    | s2-s11       | Saved registers      | Yes                    |
 | x28-x31    | t3-t6        | Temporary registers  | No                     |
-## RISC-V Base Instruction Set (Excl. FENCE/PAUSE/ECALL/EBREAK)
+## RISC-V 32-bit Base Instruction Set (Excl. FENCE/PAUSE/ECALL/EBREAK)
 | Type   | Bits 31:25                 | Bits 24:20 | Bits 19:15 | Bits 14:12 | Bits 11:7      | Bits 6:0 |
 | ------ | -------------------------- | ---------- | ---------- | ---------- | -------------- | -------- |
 | R-type | `funct7`                   | `rs2`      | `rs1`      | `funct3`   | `rd`           | `opcode` |
@@ -44,7 +49,7 @@ https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf
 | U-type | `imm[31:12]`               | —          | —          | —          | `rd`           | `opcode` |
 | J-type | `imm[20\|10:1\|11\|19:12]` | —          | —          | —          | `rd`           | `opcode` |
 
-| Bits 31:25 / imm           | Bits 24:20 | Bits 19:15 | Bits 14:12 | Bits 11:7      | Opcode    | Instruction |
+| Bits 31:25           | Bits 24:20 | Bits 19:15 | Bits 14:12 | Bits 11:7      | Bits 6:0    | Instruction |
 | -------------------------- | ---------- | ---------- | ---------- | -------------- | --------- | ----------- |
 | `imm[31:12]`               | —          | —          | —          | `rd`           | `0110111` | `LUI`       |
 | `imm[31:12]`               | —          | —          | —          | `rd`           | `0010111` | `AUIPC`     |
