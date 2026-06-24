@@ -2,6 +2,8 @@
 This project is a 32-bit RISC-V processor implementing the RV32I base instruction set, written in SystemVerilog and using Vivado for simulation. The CPU architecture is single-stage, where each instruction is executed within one clock cycle.
 
 Agentic AI was used to assist with generating the testbench, but all other code was written by hand for learning purposes.
+# Architecture Diagram
+![Architecture Diagram](./images/io_diagram.png)
 # RISC-V Documentation
 https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf
 # Project Documentation
